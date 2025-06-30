@@ -19,7 +19,6 @@ export const metadata: Metadata = {
       'Portfolio of Nowshad Islam, a passionate full-stack engineer and devops expert.',
     type: 'website',
   },
-  generator: 'v0.dev',
 };
 
 export default function RootLayout({
