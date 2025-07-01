@@ -1,72 +1,79 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Download, Menu, Moon, Sun } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useTheme } from "next-themes"
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Download, Menu, Moon, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useTheme } from 'next-themes';
 
 const navItems = [
-  { name: "About", href: "#about" },
-  { name: "Experience", href: "#experience" },
-  { name: "Projects", href: "#projects" },
-  { name: "Education", href: "#education" },
-  { name: "Contact", href: "#contact" },
-]
+  { name: 'About', href: '#about' },
+  { name: 'Experience', href: '#experience' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Education', href: '#education' },
+  { name: 'Contact', href: '#contact' },
+];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
-  const { theme, setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleDownloadResume = () => {
-    // Create a mock PDF download
-    const element = document.createElement("a")
-    const file = new Blob(
-      [
-        `John Doe - Full Stack Developer Resume
-        
-Contact Information:
-Email: john.doe@example.com
-Phone: +1 (555) 123-4567
-Location: San Francisco, CA
+    try {
+      fetch('/documents/resume.pdf')
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Network response error');
+          }
+          return res.blob();
+        })
+        .then((blob) => {
+          // Create a blob url for the PDF
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = 'resume.pdf';
+          document.body.appendChild(link);
+          link.click();
 
-Experience:
-- Senior Full Stack Developer at TechCorp Inc. (2022 - Present)
-- Frontend Developer at StartupXYZ (2020 - 2022)
-- Junior Developer at WebSolutions Ltd. (2019 - 2020)
-
-Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
-        `,
-      ],
-      { type: "text/plain" },
-    )
-    element.href = URL.createObjectURL(file)
-    element.download = "John_Doe_Resume.txt"
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
-  }
+          // Clean up the url object and remove the link element
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        })
+        .catch((error) => {
+          console.error('Error downloading the resume:', error);
+          alert(
+            'Sorry, there was an error downloading the resume. Please try again later.'
+          );
+        });
+    } catch (error) {
+      console.error('Error downloading the resume:', error);
+      alert(
+        'Sorry, there was an error downloading the resume. Please try again later.'
+      );
+    }
+  };
 
   const toggleTheme = () => {
-    if (resolvedTheme === "dark") {
-      setTheme("light")
+    if (resolvedTheme === 'dark') {
+      setTheme('light');
     } else {
-      setTheme("dark")
+      setTheme('dark');
     }
-  }
+  };
 
   // Don't render theme button until mounted to avoid hydration mismatch
   if (!mounted) {
@@ -75,7 +82,7 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              JD
+              NI
             </div>
             <div className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
@@ -97,13 +104,15 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
           </div>
         </div>
       </nav>
-    )
+    );
   }
 
   return (
     <motion.nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/80 backdrop-blur-md border-b shadow-sm" : "bg-transparent"
+        isScrolled
+          ? 'bg-background/80 backdrop-blur-md border-b shadow-sm'
+          : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -112,12 +121,16 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <motion.div className="flex-shrink-0" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div
+            className="flex-shrink-0"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Link
               href="/"
               className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
             >
-              JD
+              NI
             </Link>
           </motion.div>
 
@@ -145,8 +158,14 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="relative" aria-label="Toggle theme">
-              {resolvedTheme === "dark" ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="relative"
+              aria-label="Toggle theme"
+            >
+              {resolvedTheme === 'dark' ? (
                 <Sun className="h-4 w-4 transition-all" />
               ) : (
                 <Moon className="h-4 w-4 transition-all" />
@@ -166,8 +185,17 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
-              {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {resolvedTheme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
             </Button>
 
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -192,8 +220,8 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
                   <div className="pt-4 border-t">
                     <Button
                       onClick={() => {
-                        handleDownloadResume()
-                        setIsOpen(false)
+                        handleDownloadResume();
+                        setIsOpen(false);
                       }}
                       className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                     >
@@ -208,5 +236,5 @@ Skills: JavaScript, TypeScript, React, Next.js, Node.js, Python, AWS, Docker
         </div>
       </div>
     </motion.nav>
-  )
+  );
 }
