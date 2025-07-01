@@ -1,34 +1,49 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 interface ProjectCarouselProps {
-  images: string[]
-  title: string
+  images: string[];
+  title: string;
+  type: string;
 }
 
-export default function ProjectCarousel({ images, title }: ProjectCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+export default function ProjectCarousel({
+  images,
+  title,
+  type,
+}: ProjectCarouselProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-  }
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+  };
 
   const prevImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
-  }
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+    );
+  };
 
   const goToImage = (index: number) => {
-    setCurrentIndex(index)
-  }
+    setCurrentIndex(index);
+  };
 
   return (
-    <div className="relative overflow-hidden rounded-t-lg group">
-      <div className="relative h-48 w-full">
+    <div
+      className={`relative overflow-hidden 
+      
+       rounded-t-lg group`}
+    >
+      <div
+        className={`relative ${
+          type === 'mobile' ? 'aspect-[9/16]' : 'aspect-[16/9]'
+        }  w-full`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -39,10 +54,15 @@ export default function ProjectCarousel({ images, title }: ProjectCarouselProps)
             className="absolute inset-0"
           >
             <Image
-              src={images[currentIndex] || "/placeholder.svg"}
+              src={images[currentIndex] || '/placeholder.svg'}
               alt={`${title} - Image ${currentIndex + 1}`}
               fill
-              className="object-cover"
+              className={`${
+                type === 'mobile'
+                  ? 'object-contain bg-slate-800 '
+                  : 'object-cover'
+              }`}
+              priority
             />
           </motion.div>
         </AnimatePresence>
@@ -77,7 +97,9 @@ export default function ProjectCarousel({ images, title }: ProjectCarouselProps)
                 key={index}
                 onClick={() => goToImage(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/75"
+                  index === currentIndex
+                    ? 'bg-white scale-125'
+                    : 'bg-white/50 hover:bg-white/75'
                 }`}
               />
             ))}
@@ -87,7 +109,11 @@ export default function ProjectCarousel({ images, title }: ProjectCarouselProps)
         {/* Overlay for project actions */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
           <Button size="sm" variant="secondary">
-            <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              className="h-4 w-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fillRule="evenodd"
                 d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"
@@ -97,7 +123,12 @@ export default function ProjectCarousel({ images, title }: ProjectCarouselProps)
             Code
           </Button>
           <Button size="sm" variant="secondary">
-            <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-4 w-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -110,5 +141,5 @@ export default function ProjectCarousel({ images, title }: ProjectCarouselProps)
         </div>
       </div>
     </div>
-  )
+  );
 }
